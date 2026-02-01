@@ -153,7 +153,7 @@ export async function getPlanning(): Promise<MemberPlanning[]> {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const response = await fetchBetaSeries<any>("/planning/member");
-  console.log("Planning API Response:", JSON.stringify(response, null, 2));
+  const response = await fetchBetaSeries<any>("/planning/member");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rawItems: any[] = [];
