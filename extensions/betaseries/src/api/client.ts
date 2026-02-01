@@ -195,12 +195,11 @@ export async function getUnwatchedEpisodes(showId: number): Promise<Episode[]> {
     "/episodes/list",
     { showId: String(showId) },
   );
-  console.log(
-    "API Response for showId",
-    showId,
-    ":",
-    JSON.stringify(data, null, 2),
+  const data = await fetchBetaSeries<{ shows: Array<{ unseen: Episode[] }> }>(
+    "/episodes/list",
+    { showId: String(showId) },
   );
+  // Extract episodes from shows[0].unseen
   // Extract episodes from shows[0].unseen
   return data.shows && data.shows.length > 0 && data.shows[0].unseen
     ? data.shows[0].unseen
