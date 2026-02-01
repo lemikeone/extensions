@@ -1,5 +1,5 @@
 import { getPreferenceValues } from "@raycast/api";
-// Remove this import - fetch is globally available
+import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 import {
   BetaSeriesResponse,
@@ -36,8 +36,11 @@ async function fetchBetaSeries<T>(
 ): Promise<T> {
   const url = new URL(`${BASE_URL}${endpoint}`);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const fetchOptions: any = {
+  const fetchOptions: {
+    method: string;
+    headers: Record<string, string>;
+    body?: string;
+  } = {
     method,
     headers: getHeaders(),
   };
@@ -144,6 +147,27 @@ export async function getMyMovies(state?: number): Promise<Movie[]> {
   return data.movies;
 }
 
+interface PlanningItem {
+  date?: string;
+  id?: number;
+  episode_id?: number;
+  show?: {
+    id?: number;
+    title?: string;
+  };
+  show_id?: number;
+  show_title?: string;
+  season?: number;
+  episode?: number;
+  title?: string;
+  code?: string;
+}
+
+interface PlanningResponse {
+  planning?: PlanningItem[];
+  episodes?: PlanningItem[];
+}
+
 export async function getPlanning(): Promise<MemberPlanning[]> {
   const { token } = getPreferenceValues<Preferences>();
   if (!token) {
@@ -151,12 +175,10 @@ export async function getPlanning(): Promise<MemberPlanning[]> {
       "This command requires a BetaSeries Token. Please add it in the extension preferences.",
     );
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await fetchBetaSeries<any>("/planning/member");
-  const response = await fetchBetaSeries<any>("/planning/member");
+  const response = await fetchBetaSeries<PlanningResponse | PlanningItem[]>("/planning/member");
+  console.log("Planning API Response:", JSON.stringify(response, null, 2));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let rawItems: any[] = [];
+  let rawItems: PlanningItem[] = [];
 
   // Try different response structures
   if (Array.isArray(response)) {
@@ -171,8 +193,7 @@ export async function getPlanning(): Promise<MemberPlanning[]> {
   }
 
   // Transform the items to match our MemberPlanning interface
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return rawItems.map((item: any) => ({
+  return rawItems.map((item: PlanningItem) => ({
     date: item.date || "",
     episode_id: item.id || item.episode_id || 0,
     show_id: item.show?.id || item.show_id || 0,
@@ -195,11 +216,12 @@ export async function getUnwatchedEpisodes(showId: number): Promise<Episode[]> {
     "/episodes/list",
     { showId: String(showId) },
   );
-  const data = await fetchBetaSeries<{ shows: Array<{ unseen: Episode[] }> }>(
-    "/episodes/list",
-    { showId: String(showId) },
+  console.log(
+    "API Response for showId",
+    showId,
+    ":",
+    JSON.stringify(data, null, 2),
   );
-  // Extract episodes from shows[0].unseen
   // Extract episodes from shows[0].unseen
   return data.shows && data.shows.length > 0 && data.shows[0].unseen
     ? data.shows[0].unseen
