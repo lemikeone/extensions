@@ -1,5 +1,5 @@
 import { getPreferenceValues } from "@raycast/api";
-import fetch from "node-fetch";
+// Remove this import - fetch is globally available
 import { URLSearchParams } from "url";
 import {
   BetaSeriesResponse,
