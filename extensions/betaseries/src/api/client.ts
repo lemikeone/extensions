@@ -1,5 +1,4 @@
 import { getPreferenceValues } from "@raycast/api";
-import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 import {
   BetaSeriesResponse,
