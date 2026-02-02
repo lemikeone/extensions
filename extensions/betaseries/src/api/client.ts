@@ -175,7 +175,9 @@ export async function getPlanning(): Promise<MemberPlanning[]> {
       "This command requires a BetaSeries Token. Please add it in the extension preferences.",
     );
   }
-  const response = await fetchBetaSeries<PlanningResponse | PlanningItem[]>("/planning/member");
+  const response = await fetchBetaSeries<PlanningResponse | PlanningItem[]>(
+    "/planning/member",
+  );
   console.log("Planning API Response:", JSON.stringify(response, null, 2));
 
   let rawItems: PlanningItem[] = [];
