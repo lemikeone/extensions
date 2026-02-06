@@ -320,7 +320,7 @@ async function sendArticle(inputState: ArticleData, options?: { direct?: boolean
   const epubBuffer = await buildEpubBuffer({
     title: inputState.title,
     author: inputState.author,
-    language: "fr",
+    language: "en",
     bodyHtml: html,
     resources,
     coverResource,
